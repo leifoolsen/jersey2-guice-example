@@ -19,5 +19,5 @@ see: `JettyMain.java` class.
 You can package the project with the [appassembler-maven-plugin](http://mojo.codehaus.org/appassembler/appassembler-maven-plugin/)
 
 * Build the project with the *appassembler* profile: *mvn install -Pappassembler* 
-* ... then run the app from the project folder with the following command: <br/>sh target/appassembler/bin/startapp*
+* ... then run the app from the project folder with the following command: <br/>sh _target/appassembler/bin/startapp_
 * Open a browser and hit *http://localhost:8087/api/say/hello*
