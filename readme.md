@@ -11,7 +11,13 @@ configuration, using Jersey-2 with Guice injection and JSON binding via MOXy.
 * Import project into your favourite IDE
 * Open `HelloResourceTest.java` to start exploring code
 
-###Note
-You can package the project with the [*appassembler-maven-plugin*](http://mojo.codehaus.org/appassembler/appassembler-maven-plugin/)
+###Note I
+This project uses the [NetsOSS embedded-jetty bootstrapper](https://github.com/NetsOSS/embedded-jetty), 
+see: `JettyMain.java` class. 
+
+###Note II
+You can package the project with the [appassembler-maven-plugin](http://mojo.codehaus.org/appassembler/appassembler-maven-plugin/)
+
 * Build the project with the *appassembler* profile: *mvn install -Pappassembler* 
-* then run the app from the project folder with the following command: *sh target/appassembler/bin/startapp*
+* ... then run the app from the project folder with the following command: *sh target/appassembler/bin/startapp*
+* Open a browser and hit *http://localhost:8087/api/say/hello*
