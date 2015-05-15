@@ -2,6 +2,7 @@ package com.github.leifoolsen.jerseyguice.rest.api;
 
 import com.github.leifoolsen.jerseyguice.domain.HelloBean;
 import com.github.leifoolsen.jerseyguice.main.JettyMain;
+import com.github.leifoolsen.jerseyguice.rest.application.ApplicationConfig;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -30,7 +31,7 @@ public class HelloResourceTest {
 
         // create the client
         Client c = ClientBuilder.newClient();
-        target = c.target(server.getURI()).path("api");
+        target = c.target(server.getURI()).path(ApplicationConfig.APPLICATION_PATH);
     }
 
     @AfterClass

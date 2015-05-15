@@ -1,17 +1,14 @@
 package com.github.leifoolsen.jerseyguice.main;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
 import com.google.common.primitives.Ints;
 import com.google.common.reflect.ClassPath;
-
 import eu.nets.oss.jetty.ContextPathConfig;
 import eu.nets.oss.jetty.EmbeddedJettyBuilder;
 import eu.nets.oss.jetty.PropertiesFileConfig;
 import eu.nets.oss.jetty.StaticConfig;
 import eu.nets.oss.jetty.StdoutRedirect;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -37,9 +34,11 @@ public class JettyMain {
         for (ClassPath.ClassInfo classInfo : cp.getTopLevelClassesRecursive("com.github.leifoolsen")) {
             Class<?> clazz = classInfo.load();
             if(clazz.isAnnotationPresent(ApplicationPath.class)) {
-                // Remove '*' from @ApplicationPath, e.g:  "/api/*" -> /api/
-                appPath = CharMatcher.is('*').removeFrom(
-                        MoreObjects.firstNonNull(clazz.getAnnotation(ApplicationPath.class).value(), ""));
+
+                // Remove '/*' from @ApplicationPath, e.g:  "/api/*" -> /api
+                appPath = clazz.getAnnotation(ApplicationPath.class).value();
+                appPath = appPath.substring(0, appPath.endsWith("/*")
+                        ? appPath.lastIndexOf("/*") : appPath.length() - 1);
 
                 break;
             }
@@ -54,7 +53,7 @@ public class JettyMain {
         System.out.println(String.format(">>> Application WADL @: %s", applicationURI));
 
         if(!EmbeddedJettyBuilder.isStartedWithAppassembler()) {
-            System.out.println(String.format(">>> Hit ENTER to stop"));
+            System.out.println(">>> Hit ENTER to stop");
             System.in.read();
             JettyMain.stopJetty(server);
         }
@@ -79,7 +78,7 @@ public class JettyMain {
         }
         StdoutRedirect.tieSystemOutAndErrToLog();
 
-        System.out.println(String.format(">>> Starting Jetty"));
+        System.out.println(">>> Starting Jetty");
 
         EmbeddedJettyBuilder.ServletContextHandlerBuilder<WebAppContext> ctx =
                 builder.createRootWebAppContext("", Resource.newClassPathResource("/webapp"));
@@ -123,7 +122,7 @@ public class JettyMain {
     }
 
     public static void stopJetty(final Server server) {
-        System.out.println(String.format(">>> Stopping Jetty"));
+        System.out.println(">>> Stopping Jetty");
         try {
             server.stop();
             server.join();
