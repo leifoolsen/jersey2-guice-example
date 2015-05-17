@@ -13,7 +13,7 @@
     </prerequisites>
 
     <properties>
-        <embedded-jetty-nets.version>1.2.2</embedded-jetty-nets.version>
+        <embedded-jetty-nets.version>1.2.2</embedded-jetty-nets.version> <!-- 1.2.2 -->
         <guava.version>18.0</guava.version>
         <guice.version>4.0</guice.version>
         <guice-bridge.version>2.4.0-b10</guice-bridge.version>
