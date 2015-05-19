@@ -1,5 +1,6 @@
 package com.github.leifoolsen.jerseyguice.main;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import eu.nets.oss.jetty.ContextPathConfig;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 
@@ -66,24 +68,29 @@ public class Main {
     }
 
     private static Map<String, String> argsToMap(String[] args) {
-        // Convert args, e.g: "port"  "8087" "context-path" "/myapp" "shutdown" "token" "secret"
-        //                    -> "port=8007", "context-path=/myapp", "shutdown", "token=secret"
+        // Convert args, e.g: port = 8087 context-path /myapp shutdown token=secret
+        //                 -> port=8007", "context-path=/myapp", "shutdown= ", "token=secret"
+
         final Map<String, String> argsMap = Maps.newHashMap();
 
         if(args != null) {
             int i = 0;
-            while (i < args.length) {
-                if ("port".equals(args[i])) {
-                    argsMap.put(args[i], args[++i]);
+            int n = args.length;
+            while (i < n) {
+                if (args[i].startsWith("port") ||
+                    args[i].startsWith("token") ||
+                    args[i].startsWith("context-path") ||
+                    args[i].startsWith("contextPath")) {
+
+                    List<String> p = Splitter.on('=').trimResults().splitToList(args[i]);
+                    String name = p.get(0).equals("contextPath") ? "context-path" : p.get(0);
+                    String value = p.size() > 1 ? p.get(1) : i < n-1 ? args[++i] : "";
+                    if(args[i].equals("=")) value = i < n-1 ? args[++i] : "";
+
+                    argsMap.put(name, value);
                 }
-                else if ("context-path".equals(args[i]) || "contextPath".equals(args[i])) {
-                    argsMap.put("context-path", args[++i]);
-                }
-                else if ("shutdown".equals(args[i])) {
+                else if (args[i].equals("shutdown")) {
                     argsMap.put(args[i], "");
-                }
-                else if ("token".equals(args[i])) {
-                    argsMap.put(args[i], args[++i]);
                 }
                 i++;
             }
