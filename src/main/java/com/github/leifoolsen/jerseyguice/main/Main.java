@@ -1,7 +1,7 @@
 package com.github.leifoolsen.jerseyguice.main;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import eu.nets.oss.jetty.ContextPathConfig;
 import eu.nets.oss.jetty.EmbeddedJettyBuilder;
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         final Map<String, String> argsMap = Main.argsToMap(args);
-        int port = Ints.tryParse(argsMap.get("port"));
+        int port = MoreObjects.firstNonNull(Ints.tryParse(argsMap.get("port")), DEFAULT_PORT);
 
         if(argsMap.containsKey("shutdown")) {
             Main.attemptShutdown(port, argsMap.get("token"));
@@ -71,7 +72,7 @@ public class Main {
         // Convert args, e.g: port = 8087 context-path /myapp shutdown token=secret
         //                 -> port=8007", "context-path=/myapp", "shutdown= ", "token=secret"
 
-        final Map<String, String> argsMap = Maps.newHashMap();
+        final Map<String, String> argsMap = new HashMap<>();
 
         if(args != null) {
             int i = 0;
