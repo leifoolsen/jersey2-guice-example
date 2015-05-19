@@ -22,6 +22,8 @@ public class Main {
     private static final int DEFAULT_PORT = 8080;
     private static final String DEFAULT_CONTEXT_PATH = "/";
 
+    private Main() {}
+
     public static void main(String[] args) throws Exception {
 
         final Map<String, String> argsMap = Main.argsToMap(args);
