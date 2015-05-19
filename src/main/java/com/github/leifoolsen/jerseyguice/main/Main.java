@@ -1,0 +1,116 @@
+package com.github.leifoolsen.jerseyguice.main;
+
+import com.google.common.collect.Maps;
+import com.google.common.primitives.Ints;
+import eu.nets.oss.jetty.ContextPathConfig;
+import eu.nets.oss.jetty.EmbeddedJettyBuilder;
+import eu.nets.oss.jetty.PropertiesFileConfig;
+import eu.nets.oss.jetty.StaticConfig;
+import org.eclipse.jetty.server.Server;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.SocketException;
+import java.net.URL;
+import java.util.Map;
+
+
+public class Main {
+    private static final int DEFAULT_PORT = 8080;
+    private static final String DEFAULT_CONTEXT_PATH = "/";
+
+    public static void main(String[] args) throws Exception {
+
+        final Map<String, String> argsMap = Main.argsToMap(args);
+        int port = Ints.tryParse(argsMap.get("port"));
+
+        if(argsMap.containsKey("shutdown")) {
+            Main.attemptShutdown(port, argsMap.get("token"));
+        }
+        else {
+            ContextPathConfig config = EmbeddedJettyBuilder.isStartedWithAppassembler()
+                    ? new HerokuConfig(new PropertiesFileConfig())
+                    : new StaticConfig(argsMap.get("context-path"), port);
+
+            Main.attemptStartup(config);
+        }
+    }
+
+    private static void attemptStartup(final ContextPathConfig config) throws IOException {
+
+        Server server = JettyRunner.start(config);
+
+        // Ctrl+C does not work inside IntelliJ
+        if(!EmbeddedJettyBuilder.isStartedWithAppassembler()) {
+            System.out.println(">>> Hit ENTER to stop");
+            System.in.read();
+            JettyRunner.stop(server);
+        }
+    }
+
+    private static void attemptShutdown(final int port, final String shutdownToken) {
+        try {
+            URL url = new URL("http://localhost:" + port + "/shutdown?token=" + shutdownToken);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.getResponseCode();
+            System.out.println(">>> Shutting down server @ " + url + ": " + connection.getResponseMessage());
+        }
+        catch (SocketException e) {
+            System.out.println(">>> Server not running @ http://localhost:" + port);
+            // Okay - the server is not running
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Map<String, String> argsToMap(String[] args) {
+        // Convert args, e.g: "port"  "8087" "context-path" "/myapp" "shutdown" "token" "secret"
+        //                    -> "port=8007", "context-path=/myapp", "shutdown", "token=secret"
+        final Map<String, String> argsMap = Maps.newHashMap();
+
+        if(args != null) {
+            int i = 0;
+            while (i < args.length) {
+                if ("port".equals(args[i])) {
+                    argsMap.put(args[i], args[++i]);
+                }
+                else if ("context-path".equals(args[i]) || "contextPath".equals(args[i])) {
+                    argsMap.put("context-path", args[++i]);
+                }
+                else if ("shutdown".equals(args[i])) {
+                    argsMap.put(args[i], "");
+                }
+                else if ("token".equals(args[i])) {
+                    argsMap.put(args[i], args[++i]);
+                }
+                i++;
+            }
+        }
+        argsMap.putIfAbsent("port", Integer.toString(DEFAULT_PORT));
+        argsMap.putIfAbsent("context-path", DEFAULT_CONTEXT_PATH);
+        return argsMap;
+    }
+
+
+    private static class HerokuConfig implements ContextPathConfig {
+
+        private final PropertiesFileConfig delegate;
+
+        private HerokuConfig(PropertiesFileConfig delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public String getContextPath() {
+            return delegate.getContextPath();
+        }
+
+        @Override
+        public int getPort() {
+            String port = System.getenv("PORT");
+            return port == null ? delegate.getPort() : Integer.parseInt(port);
+        }
+    }
+}

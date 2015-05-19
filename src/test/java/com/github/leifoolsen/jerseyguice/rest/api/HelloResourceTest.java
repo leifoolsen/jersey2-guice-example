@@ -1,7 +1,7 @@
 package com.github.leifoolsen.jerseyguice.rest.api;
 
 import com.github.leifoolsen.jerseyguice.domain.HelloBean;
-import com.github.leifoolsen.jerseyguice.main.JettyMain;
+import com.github.leifoolsen.jerseyguice.main.JettyRunner;
 import com.github.leifoolsen.jerseyguice.rest.application.ApplicationConfig;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
@@ -14,9 +14,10 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 public class HelloResourceTest {
     private static final int PORT = 8080;
@@ -27,7 +28,7 @@ public class HelloResourceTest {
     @BeforeClass
     public static void setUp() throws Exception {
         // Start the server
-        server  = JettyMain.startJetty(PORT);
+        server = JettyRunner.start("/", PORT);
 
         // create the client
         Client c = ClientBuilder.newClient();
@@ -36,7 +37,7 @@ public class HelloResourceTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        JettyMain.stopJetty(server);
+        JettyRunner.stop(server);
     }
 
     @Test
@@ -47,10 +48,11 @@ public class HelloResourceTest {
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
+
         HelloBean hello = response.readEntity(HelloBean.class);
         assertNotNull(hello);
-        assertEquals("Hello from Guice injected service!", hello.say());
+        assertThat(hello.say(), equalTo("Hello from Guice injected service!"));
     }
 
     @Test
@@ -60,8 +62,8 @@ public class HelloResourceTest {
                 .request(MediaType.APPLICATION_XML)
                 .get();
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertThat(response.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
         String wadl = response.readEntity(String.class);
-        assertTrue(wadl.length() > 0);
+        assertThat(wadl.length(), greaterThan(0));
     }
 }

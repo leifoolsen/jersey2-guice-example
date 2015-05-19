@@ -13,7 +13,7 @@ configuration, using Jersey-2 with Guice injection and JSON binding via MOXy.
 
 ###Note I
 This project uses the [NetsOSS embedded-jetty bootstrapper](https://github.com/NetsOSS/embedded-jetty), 
-see: `JettyMain.java` class. 
+see: `JettyRunner.java` class. 
 
 ###Note II
 You can package the project with the [appassembler-maven-plugin](http://mojo.codehaus.org/appassembler/appassembler-maven-plugin/)

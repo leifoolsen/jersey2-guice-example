@@ -105,12 +105,12 @@
 
     <build>
         <plugins>
-            <!-- Run the application using "mvn exec:java" to deploy to Jetty -->
+            <!-- Run the application using "mvn exec:java" to deploy to EmbeddedJetty -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.github.leifoolsen.jerseyguice.main.JettyMain</mainClass>
+                    <mainClass>com.github.leifoolsen.jerseyguice.main.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -193,21 +193,21 @@
                 <version>${servlet3.version}</version>
             </dependency>
 
-            <!-- Jetty builder -->
+            <!-- EmbeddedJetty builder -->
             <dependency>
                 <groupId>eu.nets.oss.jetty</groupId>
                 <artifactId>embedded-jetty_9.2</artifactId>
                 <version>${embedded-jetty-nets.version}</version> <!-- 1.2.3-SNAPSHOT -->
             </dependency>
 
-            <!-- Basic Jetty -->
+            <!-- Basic EmbeddedJetty -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-webapp</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
 
-            <!-- For Servlet 3 annotations in embedded Jetty -->
+            <!-- For Servlet 3 annotations in embedded EmbeddedJetty -->
             <!-- http://www.eclipse.org/jetty/documentation/current/using-annotations-embedded.html -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
@@ -321,7 +321,7 @@
                                     <programs>
                                         <program>
                                             <id>startapp</id>
-                                            <mainClass>com.github.leifoolsen.jerseyguice.main.JettyMain</mainClass>
+                                            <mainClass>com.github.leifoolsen.jerseyguice.main.Main</mainClass>
                                         </program>
                                     </programs>
                                 </configuration>
