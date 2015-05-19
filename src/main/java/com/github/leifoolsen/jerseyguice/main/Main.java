@@ -40,13 +40,13 @@ public class Main {
 
     private static void attemptStartup(final ContextPathConfig config) throws IOException {
 
-        Server server = JettyRunner.start(config);
+        Server server = JettyBootstrap.start(config);
 
         // Ctrl+C does not work inside IntelliJ
         if(!EmbeddedJettyBuilder.isStartedWithAppassembler()) {
             System.out.println(">>> Hit ENTER to stop");
             System.in.read();
-            JettyRunner.stop(server);
+            JettyBootstrap.stop(server);
         }
     }
 

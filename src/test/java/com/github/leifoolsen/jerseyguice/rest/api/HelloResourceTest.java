@@ -1,7 +1,7 @@
 package com.github.leifoolsen.jerseyguice.rest.api;
 
 import com.github.leifoolsen.jerseyguice.domain.HelloBean;
-import com.github.leifoolsen.jerseyguice.main.JettyRunner;
+import com.github.leifoolsen.jerseyguice.main.JettyBootstrap;
 import com.github.leifoolsen.jerseyguice.rest.application.ApplicationConfig;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class HelloResourceTest {
     private static final int PORT = 8080;
+    private static final String DEFAULT_CONTEXT_PATH = "/";
 
     private static Server server;
     private static WebTarget target;
@@ -28,7 +29,7 @@ public class HelloResourceTest {
     @BeforeClass
     public static void setUp() throws Exception {
         // Start the server
-        server = JettyRunner.start("/", PORT);
+        server = JettyBootstrap.start(DEFAULT_CONTEXT_PATH, PORT);
 
         // create the client
         Client c = ClientBuilder.newClient();
@@ -37,7 +38,7 @@ public class HelloResourceTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        JettyRunner.stop(server);
+        JettyBootstrap.stop(server);
     }
 
     @Test

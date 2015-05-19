@@ -11,12 +11,12 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.net.URL;
 
-public class JettyRunner {
+public class JettyBootstrap {
 
-    private JettyRunner() {}
+    private JettyBootstrap() {}
 
     public static Server start(final String contextPath, final int port) {
-        return JettyRunner.start(new StaticConfig(contextPath, port));
+        return JettyBootstrap.start(new StaticConfig(contextPath, port));
     }
 
     public static Server start(final ContextPathConfig config) {
@@ -47,7 +47,7 @@ public class JettyRunner {
         //   WEB-INF/libs
         //
         // In exploded mode we also need Jetty to scan the "target/classes" directory for annotations
-        URL classes = JettyRunner.class.getProtectionDomain().getCodeSource().getLocation();
+        URL classes = JettyBootstrap.class.getProtectionDomain().getCodeSource().getLocation();
         if(classes != null) {
             handler.setExtraClasspath(classes.getPath());  // TODO: Set path to test-classes if needed
         }
