@@ -12,10 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.inject.Inject;
-import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.ApplicationPath;
 
-@WebServlet(loadOnStartup = 1)
 @ApplicationPath(ApplicationConfig.APPLICATION_PATH + "/*")
 public class ApplicationConfig extends ResourceConfig {
     private final Logger logger = LoggerFactory.getLogger(getClass());
