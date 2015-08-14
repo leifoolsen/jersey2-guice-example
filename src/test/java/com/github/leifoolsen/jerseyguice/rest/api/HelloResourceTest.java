@@ -1,7 +1,7 @@
 package com.github.leifoolsen.jerseyguice.rest.api;
 
 import com.github.leifoolsen.jerseyguice.domain.HelloBean;
-import com.github.leifoolsen.jerseyguice.main.JettyBootstrap;
+import com.github.leifoolsen.jerseyguice.embeddedjetty.JettyFactory;
 import com.github.leifoolsen.jerseyguice.rest.application.ApplicationConfig;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -29,7 +30,9 @@ public class HelloResourceTest {
     @BeforeClass
     public static void setUp() throws Exception {
         // Start the server
-        server = JettyBootstrap.start(DEFAULT_CONTEXT_PATH, PORT);
+        server = JettyFactory.createServer(PORT);
+        JettyFactory.start(server);
+        assertThat(server.isRunning(), is(true));
 
         // create the client
         Client c = ClientBuilder.newClient();
@@ -38,7 +41,7 @@ public class HelloResourceTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        JettyBootstrap.stop(server);
+        JettyFactory.stop(server);
     }
 
     @Test

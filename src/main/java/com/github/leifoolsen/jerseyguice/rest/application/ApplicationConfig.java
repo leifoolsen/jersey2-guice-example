@@ -16,22 +16,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.ApplicationPath;
 
 @WebServlet(loadOnStartup = 1)
-@ApplicationPath("/api/*")
+@ApplicationPath(ApplicationConfig.APPLICATION_PATH + "/*")
 public class ApplicationConfig extends ResourceConfig {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String APPLICATION_PATH;
-
-    static {
-        String appPath = "";
-        if(ApplicationConfig.class.isAnnotationPresent(ApplicationPath.class)) {
-            // Remove '/*' from @ApplicationPath, e.g:  "/api/*" -> /api
-            appPath = ApplicationConfig.class.getAnnotation(ApplicationPath.class).value();
-            appPath = appPath.substring(0, appPath.endsWith("/*")
-                    ? appPath.lastIndexOf("/*") : appPath.length()-1);
-        }
-        APPLICATION_PATH = appPath;
-    }
+    public static final String APPLICATION_PATH = "/api";
 
     @Inject
     public ApplicationConfig(ServiceLocator serviceLocator) {

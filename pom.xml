@@ -35,16 +35,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.nets.oss.jetty</groupId>
-            <artifactId>embedded-jetty_9.2</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-annotations</artifactId>
+        </dependency>
+
+        <!-- Add this dependency to get rid of the log message: "NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet" -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jsp</artifactId>
         </dependency>
 
         <dependency>
@@ -226,7 +229,15 @@
                 <version>${jetty.version}</version>
             </dependency>
 
-            <!-- Override versions in "eu.nets.oss.jetty:embedded-jetty_9.2" -->
+            <!-- -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>apache-jsp</artifactId>
+                <version>${jetty.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <!--  -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-security</artifactId>
@@ -300,62 +311,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <profiles>
-        <profile>
-            <id>appassembler</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>appassembler-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>make-startup-scripts-and-gather-dependencies</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>assemble</goal>
-                                </goals>
-                                <configuration>
-                                    <repositoryLayout>flat</repositoryLayout>
-                                    <programs>
-                                        <program>
-                                            <id>startapp</id>
-                                            <mainClass>com.github.leifoolsen.jerseyguice.main.Main</mainClass>
-                                        </program>
-                                    </programs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>tattletale</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jboss.tattletale</groupId>
-                        <artifactId>tattletale-maven</artifactId>
-                        <executions>
-                            <execution>
-                                <id>run-tattletale-report</id>
-                                <!-- it is bound by default to "package" phase, which isn't what we want for reporting -->
-                                <!-- <phase>site</phase> -->
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                                <configuration>
-                                    <source>${project.build.directory}/appassembler/repo</source>
-                                    <destination>${project.build.directory}/tattletale</destination>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
